@@ -1,0 +1,56 @@
+pipeline {
+  agent none
+
+  stages {
+    stage('Checkout') {
+      agent any
+      steps {
+        git branch: 'main', url: 'https://github.com/pakbg90/cccr-study.git'
+      }
+    }
+    stage('Build') {
+      agent {
+        docker { image 'maven:3-openjdk-11' }
+      }
+      steps {
+        sh 'mvn clean package -DskipTests=true'
+      }
+    }
+    stage('Test') {
+      agent {
+        docker { image 'maven:3-openjdk-11' }
+      }
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage('Build Docker Image') {
+      agent any
+      steps {
+        sh 'docker image build -t spring-test:0.1 .'
+      }
+    }
+    stage('Tag Docker Image') {
+      agent any
+      steps {
+        sh 'docker image tag spring-test:0.1 pakbg90/spring-test:0.1'
+      }
+    }
+    stage('Publish Docker Image') {
+      agent any
+      steps {
+        withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
+          sh 'docker image push pakbg90/spring-test:0.1'
+        }
+      }
+    }
+    stage('Run Docker Container') {
+      agent {
+        docker { image 'docker:dind' }
+      }
+      steps {
+        sh 'docker -H tcp://192.168.0.17:2375 container run --detach --name spring-test -p 2132:8080 spring-test:0.1'
+      }
+    }
+  }
+}
