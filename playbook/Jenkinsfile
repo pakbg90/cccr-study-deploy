@@ -34,6 +34,7 @@ pipeline {
       agent any
       steps {
         sh 'docker image tag myspring:$BUILD_NUMBER pakbg90/myspring:$BUILD_NUMBER'
+        sh 'docker image tag myspring:$BUILD_NUMBER pakbg90/myspring:latest'
       }
     }
     stage('Publish Docker Image') {
