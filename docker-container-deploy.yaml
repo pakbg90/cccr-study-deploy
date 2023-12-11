@@ -5,7 +5,7 @@
   - name: Create & Start Container
     docker_container:
       name: myweb
-      image: "pakbg90/spring-test:0.1/:{{ lookup('env','BUILD_NUMBER') }}"
+      image: "pakbg90/myspring:{{ lookup('env','BUILD_NUMBER') }}"
       state: started
       ports:
       - "80:8080"
