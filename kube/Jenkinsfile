@@ -1,0 +1,39 @@
+pipeline {
+  agent {
+    kubernetes {
+      yamlFile 'agent.yaml'
+    }
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        container('maven') {
+          git branch: 'main', url: 'https://github.com/pakbg90/cccr-study.git'
+        }
+      }
+    }
+    stage('Build') {
+      steps {
+        container('maven') {
+          sh 'mvn clean package -DskipTests=true'
+        }
+      }
+    }
+    stage('Test') {
+      steps {
+        container('maven') {
+          sh 'mvn test'
+        }
+      }
+    }
+    stage('Build & Tag & Push Docker Image') {
+      steps {
+        container('kaniko') {
+          sh 'executor --context=dir://$WORKSPACE \
+                       --destination=mykube:$BUILD_NUMBER \
+                       --destination=mykube:latest'
+        }
+      }
+    }
+  }
+}
