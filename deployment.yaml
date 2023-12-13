@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: mykubec
-        image: <IMAGE>
+        image: pakbg90/mykube:17
         ports:
         - containerPort: 8080
