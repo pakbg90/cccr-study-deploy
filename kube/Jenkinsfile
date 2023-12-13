@@ -29,7 +29,9 @@ pipeline {
     stage('Build & Tag & Push Docker Image') {
       steps {
         container('kaniko') {
-          sh 'executor --context=dir://$WORKSPACE --destination=mykube:$BUILD_NUMBER --destination=mykube:latest'
+          sh 'executor --context=dir://$WORKSPACE \
+                       --destination=pakbg90/mykube:$BUILD_NUMBER \
+                       --destination=pakbg90/mykube:latest'
         }
       }
     }
