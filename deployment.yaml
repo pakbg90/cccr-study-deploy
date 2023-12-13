@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mykube-deploy
+  labels:
+    app: mykube
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mykube
+  template:
+    metadata:
+      labels:
+        app: mykube
+    spec:
+      containers:
+      - name: mykubec
+        image: pakbg90/mykube
+        ports:
+        - containerPort: 8080
