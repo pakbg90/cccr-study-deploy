@@ -26,15 +26,6 @@ pipeline {
         }
       }
     }
-    stage('Build & Tag & Push Docker Image') {
-      steps {
-        container('kaniko') {
-          sh 'executor --context=dir://$WORKSPACE \
-                       --destination=pakbg90/mykube:$BUILD_NUMBER \
-                       --destination=pakbg90/mykube:latest'
-        }
-      }
-    }
 
     stage('Update K8s Manifests & Push') {
       environment {
@@ -45,6 +36,16 @@ pipeline {
       githubURL = "https://github.com/${githubId}/${githubRepo}.git"
       dockerhubId = 'pakbg90' //c1t1d0s7
       dockerhubRepo = 'mykube' //hello-world
+    }
+
+    stage('Build & Tag & Push Docker Image') {
+      steps {
+        container('kaniko') {
+          sh 'executor --context=dir://$WORKSPACE \
+                       --destination=${dockerhubId}/${dockerhubRepo}:$BUILD_NUMBER \
+                       --destination=${dockerhubId}/${dockerhubRepo}:latest'
+        }
+      }
     }
 
     steps {
